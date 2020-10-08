@@ -117,11 +117,7 @@ class Menu(object):
             print('-'*20)
             load_all = Database.find('posts',{'author':self.user})
             for _post in load_all:
-                print('Date: {}, title: {} \n\n{}'.format(_post['created_date'],_post['title'],_post['content']))
-                """
-                if _post['author'] == self.user:
-                    print('Date: {}, title: {} \n\n{}'.format(_post['created_date'],_post['title'],_post['content']))
-                """    
+                print('Date: {}, title: {} \n\n{}'.format(_post['created_date'],_post['title'],_post['content']))  
                 print('-'*30)
             #===================================================================================================
             else:
