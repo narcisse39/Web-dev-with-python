@@ -1,6 +1,6 @@
 __author__ = 'Narcisse'
 
-import datetime
+from datetime import datetime
 import uuid
 from models.post import Post
 from database import Database
@@ -15,20 +15,30 @@ class Blog(object):
         self.description = description
         self.id = uuid.uuid4().hex if id is None else id
 
-    def new_post(self):
+
+    @staticmethod
+    def new_post(_id,_author):
         title = input('Enter the post title: ')
         content = input('Enter the post content: ')
-        date = input('Enter the date or leave blanck for today date(format DDMMYYYY): ')
-        post = Post(blog_id=self.id,
+        date = input('Enter the date or leave blanck for today date(format DD/MM/YYYY): ')
+
+        if date =="":
+            current_date_time = datetime.utcnow()
+        else: 
+            date_to_string = date + ' ' + datetime.now().strftime("%H:%M:%S")
+            current_date_time = datetime.strptime(date_to_string, "%d/%m/%Y %H:%M:%S")
+
+        post = Post(blog_id=_id,
             title=title,
             content=content,
-            author =self.author, 
-            date = datetime.datetime.utcnow()
+            author =_author, 
+            date = current_date_time
             )
         post.save_to_mongo()
 
+    
     def get_posts(self):
-        return Post.from_mongo(self.id)
+        return Post.get_from_mongo_blog(self.id)
 
     def save_to_mongo(self):
         Database.insert(collection='blogs', data=self.json_file())
@@ -44,4 +54,5 @@ class Blog(object):
     @staticmethod
     def get_from_mongo(id):
         blog_data = Database.find_one(collection='blogs',query={'id':id})
+        
         return blog_data
